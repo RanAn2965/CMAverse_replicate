@@ -1,0 +1,14 @@
+---
+title: "track_updates"
+author: "ran an"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Overview Page
+
+1) Added Wang 2025 paper for Table 1 resource
+2) Table 1: Corrected formulas format for RD and SD
