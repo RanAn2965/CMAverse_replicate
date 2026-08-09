@@ -6,6 +6,8 @@ authors:
     
 title: CMAverse Replicate
 url: https://bs1125.github.io/CMAverse/
+toc:
+  depth: 3
 template:
   params:
     bootswatch: sandstone
@@ -40,4 +42,4 @@ navbar:
       href: reference/index.html
     - icon: fa-github fa-lg
       text: "GitHub"
-      href: https://github.com/BS1125/CMAverse/ 
+      href: https://github.com/RanAn2965/CMAverse_replicate

@@ -1,5 +1,5 @@
-pandoc: 2.17.1.1
-pkgdown: 1.6.1
+pandoc: 3.8.3
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   case_control: case_control.html
@@ -11,8 +11,7 @@ articles:
   post_exposure_confounding: post_exposure_confounding.html
   quickstart: quickstart.html
   single_mediator: single_mediator.html
-last_built: 2024-07-02T04:43Z
+last_built: 2026-08-09T02:27Z
 urls:
-  reference: https://bs1125.github.io/CMAverse//reference
-  article: https://bs1125.github.io/CMAverse//articles
-
+  reference: https://bs1125.github.io/CMAverse/reference
+  article: https://bs1125.github.io/CMAverse/articles
