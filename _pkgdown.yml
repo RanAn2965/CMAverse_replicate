@@ -5,9 +5,9 @@ authors:
     href: "https://www.lindavaleri.com/"
     
 title: CMAverse Replicate
-url: https://bs1125.github.io/CMAverse/
-toc:
-  depth: 3
+url: https://ranan2965.github.io/CMAverse_replicate/
+  toc:
+    depth: 3
 template:
   params:
     bootswatch: sandstone
