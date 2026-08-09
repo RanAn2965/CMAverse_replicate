@@ -12,3 +12,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 1) Added Wang 2025 paper for Table 1 resource
 2) Table 1: Corrected formulas format for RD and SD
+
+## Single Mediator
+
+1) Removed all comment-out symbols for The Natural Effect Model
+
+## Multiple Mediators
+
+1) Removed all comment-out symbols for The Natural Effect Model
+
+## Multistate Model
+
+1) Add library(tidyverse)

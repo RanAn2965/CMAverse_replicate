@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+<meta name="date" content="2026-08-08" />
+
+<title>Statistical Modeling with Multiple Mediators</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Statistical Modeling with Multiple
+Mediators</h1>
+<h4 class="date">2026-08-08</h4>
+
+
+
+<p>This example demonstrates how to use <code>cmest</code> when there
+are multiple mediators. For this purpose, we simulate some data
+containing a continuous baseline confounder <span class="math inline">\(C_1\)</span>, a binary baseline confounder <span class="math inline">\(C_2\)</span>, a binary exposure <span class="math inline">\(A\)</span>, a count mediator <span class="math inline">\(M_1\)</span>, a categorical mediator <span class="math inline">\(M_2\)</span> and a binary outcome <span class="math inline">\(Y\)</span>. The true regression models for <span class="math inline">\(A\)</span>, <span class="math inline">\(M_1\)</span>, <span class="math inline">\(M_2\)</span> and <span class="math inline">\(Y\)</span> are: <span class="math display">\[logit(E(A|C_1,C_2))=0.2+0.5C_1+0.1C_2\]</span>
+<span class="math display">\[log(E(M_1|A,C_1,C_2))=1-2A+0.5C_1+0.8C_2\]</span>
+<span class="math display">\[log\frac{E[M_2=1|A,M_1,C_1,C_2]}{E[M_2=0|A,M_1,C_1,C_2]}=0.1+0.1A+0.4M_1-0.5C_1+0.1C_2\]</span>
+<span class="math display">\[log\frac{E[M_2=2|A,M_1,C_1,C_2]}{E[M_2=0|A,M_1,C_1,C_2]}=0.4+0.2A-0.1M_1-C_1+0.5C_2\]</span>
+<span class="math display">\[logit(E(Y|A,M_1,M_2,C_1,C_2)))=-4+0.8A-1.8M_1+0.5(M_2==1)+0.8(M_2==2)+0.5AM_1-0.4A(M_2==1)-1.4A(M_2==2)+0.3*C_1-0.6C_2\]</span></p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>expit <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">exp</span>(x)<span class="sc">/</span>(<span class="dv">1</span><span class="sc">+</span><span class="fu">exp</span>(x))</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">10000</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>C1 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, <span class="at">mean =</span> <span class="dv">1</span>, <span class="at">sd =</span> <span class="fl">0.1</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>C2 <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fl">0.6</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fu">expit</span>(<span class="fl">0.2</span> <span class="sc">+</span> <span class="fl">0.5</span><span class="sc">*</span>C1 <span class="sc">+</span> <span class="fl">0.1</span><span class="sc">*</span>C2))</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>M1 <span class="ot">&lt;-</span> <span class="fu">rpois</span>(n, <span class="fu">exp</span>(<span class="dv">1</span> <span class="sc">-</span> <span class="dv">2</span><span class="sc">*</span>A <span class="sc">+</span> <span class="fl">0.5</span><span class="sc">*</span>C1 <span class="sc">+</span> <span class="fl">0.8</span><span class="sc">*</span>C2))</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>linpred1 <span class="ot">&lt;-</span> <span class="fl">0.1</span> <span class="sc">+</span> <span class="fl">0.1</span><span class="sc">*</span>A <span class="sc">+</span> <span class="fl">0.4</span><span class="sc">*</span>M1 <span class="sc">-</span> <span class="fl">0.5</span><span class="sc">*</span>C1 <span class="sc">+</span> <span class="fl">0.1</span><span class="sc">*</span>C2</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>linpred2 <span class="ot">&lt;-</span> <span class="fl">0.4</span> <span class="sc">+</span> <span class="fl">0.2</span><span class="sc">*</span>A <span class="sc">-</span> <span class="fl">0.1</span><span class="sc">*</span>M1 <span class="sc">-</span> C1 <span class="sc">+</span> <span class="fl">0.5</span><span class="sc">*</span>C2</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>probm0 <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(linpred1) <span class="sc">+</span> <span class="fu">exp</span>(linpred2))</span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>probm1 <span class="ot">&lt;-</span> <span class="fu">exp</span>(linpred1) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(linpred1) <span class="sc">+</span> <span class="fu">exp</span>(linpred2))</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>probm2 <span class="ot">&lt;-</span> <span class="fu">exp</span>(linpred2) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(linpred1) <span class="sc">+</span> <span class="fu">exp</span>(linpred2))</span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>M2 <span class="ot">&lt;-</span> <span class="fu">factor</span>(<span class="fu">sapply</span>(<span class="dv">1</span><span class="sc">:</span>n, <span class="at">FUN =</span> <span class="cf">function</span>(x) <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>), <span class="at">size =</span> <span class="dv">1</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>                                                 <span class="at">prob=</span><span class="fu">c</span>(probm0[x],</span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>                                                        probm1[x],</span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>                                                        probm2[x]))))</span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>Y <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="dv">1</span>, <span class="fu">expit</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fl">0.8</span><span class="sc">*</span>A <span class="sc">-</span> <span class="fl">1.8</span><span class="sc">*</span>M1 <span class="sc">+</span> <span class="fl">0.5</span><span class="sc">*</span>(M2 <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">+</span> <span class="fl">0.8</span><span class="sc">*</span>(M2 <span class="sc">==</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>                          <span class="fl">0.5</span><span class="sc">*</span>A<span class="sc">*</span>M1 <span class="sc">-</span> <span class="fl">0.4</span><span class="sc">*</span>A<span class="sc">*</span>(M2 <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">-</span> <span class="fl">1.4</span><span class="sc">*</span>A<span class="sc">*</span>(M2 <span class="sc">==</span> <span class="dv">2</span>)  <span class="sc">+</span> <span class="fl">0.3</span><span class="sc">*</span>C1 <span class="sc">-</span> <span class="fl">0.6</span><span class="sc">*</span>C2))</span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(A, M1, M2, Y, C1, C2)</span></code></pre></div>
+<p>The DAG for this scientific setting is:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(CMAverse)</span></code></pre></div>
+<pre><code>## Registered S3 method overwritten by &#39;lme4&#39;:
+##   method           from
+##   na.action.merMod car</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">cmdag</span>(<span class="at">outcome =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure =</span> <span class="st">&quot;A&quot;</span>, <span class="at">mediator =</span> <span class="fu">c</span>(<span class="st">&quot;M1&quot;</span>, <span class="st">&quot;M2&quot;</span>),</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>      <span class="at">basec =</span> <span class="fu">c</span>(<span class="st">&quot;C1&quot;</span>, <span class="st">&quot;C2&quot;</span>), <span class="at">postc =</span> <span class="cn">NULL</span>, <span class="at">node =</span> <span class="cn">TRUE</span>, <span class="at">text_col =</span> <span class="st">&quot;white&quot;</span>)</span></code></pre></div>
+<p><img role="img" src="data:image/png;base64,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" /><!-- --></p>
+<p>In this setting, we have a count mediator, so the marginal structural
+model is not available. We can use the rest five statistical modeling
+approaches. The results are shown below.</p>
+<div id="the-regression-based-approach" class="section level2">
+<h2>The Regression-based Approach</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>res_rb <span class="ot">&lt;-</span> <span class="fu">cmest</span>(<span class="at">data =</span> data, <span class="at">model =</span> <span class="st">&quot;rb&quot;</span>, <span class="at">outcome =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure =</span> <span class="st">&quot;A&quot;</span>,</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>                <span class="at">mediator =</span> <span class="fu">c</span>(<span class="st">&quot;M1&quot;</span>, <span class="st">&quot;M2&quot;</span>), <span class="at">basec =</span> <span class="fu">c</span>(<span class="st">&quot;C1&quot;</span>, <span class="st">&quot;C2&quot;</span>), <span class="at">EMint =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>                <span class="at">mreg =</span> <span class="fu">list</span>(<span class="st">&quot;poisson&quot;</span>, <span class="st">&quot;multinomial&quot;</span>), <span class="at">yreg =</span> <span class="st">&quot;logistic&quot;</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>                <span class="at">astar =</span> <span class="dv">0</span>, <span class="at">a =</span> <span class="dv">1</span>, <span class="at">mval =</span> <span class="fu">list</span>(<span class="dv">0</span>, <span class="dv">2</span>), </span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>                <span class="at">estimation =</span> <span class="st">&quot;imputation&quot;</span>, <span class="at">inference =</span> <span class="st">&quot;bootstrap&quot;</span>, <span class="at">nboot =</span> <span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="fu">summary</span>(res_rb)</span></code></pre></div>
+<pre><code>## Causal Mediation Analysis
+## 
+## # Outcome regression:
+## 
+## Call:
+## glm(formula = Y ~ A + M1 + M2 + A * M1 + A * M2 + C1 + C2, family = binomial(), 
+##     data = getCall(x$reg.output$yreg)$data, weights = getCall(x$reg.output$yreg)$weights)
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  1.125104   0.478893   2.349 0.018804 *  
+## A            0.460265   0.400463   1.149 0.250419    
+## M1          -1.809307   0.180027 -10.050  &lt; 2e-16 ***
+## M21         -0.007101   0.364067  -0.020 0.984438    
+## M22          0.841167   0.405154   2.076 0.037879 *  
+## C1           0.504243   0.284671   1.771 0.076508 .  
+## C2          -0.643001   0.062025 -10.367  &lt; 2e-16 ***
+## A:M1         0.535812   0.183808   2.915 0.003556 ** 
+## A:M21        0.129896   0.370967   0.350 0.726222    
+## A:M22       -1.447096   0.412172  -3.511 0.000447 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 13336.6  on 9999  degrees of freedom
+## Residual deviance:  7347.9  on 9990  degrees of freedom
+## AIC: 7367.9
+## 
+## Number of Fisher Scoring iterations: 10
+## 
+## 
+## # Mediator regressions: 
+## 
+## Call:
+## glm(formula = M1 ~ A + C1 + C2, family = poisson(), data = getCall(x$reg.output$mreg[[1L]])$data, 
+##     weights = getCall(x$reg.output$mreg[[1L]])$weights)
+## 
+## Coefficients:
+##             Estimate Std. Error  z value Pr(&gt;|z|)    
+## (Intercept)  1.06240    0.05631   18.868  &lt; 2e-16 ***
+## A           -2.00634    0.01331 -150.709  &lt; 2e-16 ***
+## C1           0.45102    0.05496    8.206 2.29e-16 ***
+## C2           0.80084    0.01314   60.961  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 43205  on 9999  degrees of freedom
+## Residual deviance: 10846  on 9996  degrees of freedom
+## AIC: 33081
+## 
+## Number of Fisher Scoring iterations: 5
+## 
+## 
+## Call:
+## nnet::multinom(formula = M2 ~ A + C1 + C2, data = getCall(x$reg.output$mreg[[2]])$data, 
+##     trace = FALSE, weights = getCall(x$reg.output$mreg[[2]])$weights)
+## 
+## Coefficients:
+##   (Intercept)         A         C1        C2
+## 1    1.946698 -1.785773 -0.3220412 0.7256062
+## 2    0.654218  0.688984 -1.7259629 0.4295399
+## 
+## Std. Errors:
+##   (Intercept)          A        C1         C2
+## 1   0.2620667 0.06393051 0.2550181 0.05235024
+## 2   0.3129261 0.10149606 0.2996053 0.06106820
+## 
+## Residual Deviance: 17966.15 
+## AIC: 17982.15 
+## 
+## # Effect decomposition on the odds ratio scale via the regression-based approach
+##  
+## Direct counterfactual imputation estimation with 
+##  bootstrap standard errors, percentile confidence intervals and p-values 
+##  
+##                Estimate Std.error  95% CIL 95% CIU  P.val    
+## Rcde            0.37758   0.15346  0.23996   0.446 &lt;2e-16 ***
+## Rpnde           2.62501   0.20683  2.54903   2.827 &lt;2e-16 ***
+## Rtnde           1.45350   0.27286  1.22050   1.587 &lt;2e-16 ***
+## Rpnie          40.15113   6.98676 40.01799  49.403 &lt;2e-16 ***
+## Rtnie          22.23209   0.88499 22.46553  23.655 &lt;2e-16 ***
+## Rte            58.35955   2.39047 60.29614  63.508 &lt;2e-16 ***
+## ERcde          -6.60294   1.45100 -8.29280  -6.343 &lt;2e-16 ***
+## ERintref        8.22796   1.24418  8.17067   9.842 &lt;2e-16 ***
+## ERintmed       16.58340   9.17041  9.31846  21.639 &lt;2e-16 ***
+## ERpnie         39.15113   6.98676 39.04375  48.430 &lt;2e-16 ***
+## ERcde(prop)    -0.11511   0.02856 -0.13991  -0.102 &lt;2e-16 ***
+## ERintref(prop)  0.14344   0.02625  0.13076   0.166 &lt;2e-16 ***
+## ERintmed(prop)  0.28911   0.14070  0.15687   0.346 &lt;2e-16 ***
+## ERpnie(prop)    0.68256   0.14301  0.62487   0.817 &lt;2e-16 ***
+## pm              0.97167   0.00231  0.97077   0.974 &lt;2e-16 ***
+## int             0.43256   0.11445  0.32290   0.477 &lt;2e-16 ***
+## pe              1.11512   0.02856  1.10153   1.140 &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Rcde: controlled direct effect odds ratio; Rpnde: pure natural direct effect odds ratio; Rtnde: total natural direct effect odds ratio; Rpnie: pure natural indirect effect odds ratio; Rtnie: total natural indirect effect odds ratio; Rte: total effect odds ratio; ERcde: excess relative risk due to controlled direct effect; ERintref: excess relative risk due to reference interaction; ERintmed: excess relative risk due to mediated interaction; ERpnie: excess relative risk due to pure natural indirect effect; ERcde(prop): proportion ERcde; ERintref(prop): proportion ERintref; ERintmed(prop): proportion ERintmed; ERpnie(prop): proportion ERpnie; pm: overall proportion mediated; int: overall proportion attributable to interaction; pe: overall proportion eliminated)
+## 
+## Relevant variable values: 
+## $a
+## [1] 1
+## 
+## $astar
+## [1] 0
+## 
+## $yval
+## [1] &quot;1&quot;
+## 
+## $mval
+## $mval[[1]]
+## [1] 0
+## 
+## $mval[[2]]
+## [1] 2</code></pre>
+</div>
+<div id="the-weighting-based-approach" class="section level2">
+<h2>The Weighting-based Approach</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>res_wb <span class="ot">&lt;-</span> <span class="fu">cmest</span>(<span class="at">data =</span> data, <span class="at">model =</span> <span class="st">&quot;wb&quot;</span>, <span class="at">outcome =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure =</span> <span class="st">&quot;A&quot;</span>,</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>                <span class="at">mediator =</span> <span class="fu">c</span>(<span class="st">&quot;M1&quot;</span>, <span class="st">&quot;M2&quot;</span>), <span class="at">basec =</span> <span class="fu">c</span>(<span class="st">&quot;C1&quot;</span>, <span class="st">&quot;C2&quot;</span>), <span class="at">EMint =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>                <span class="at">ereg =</span> <span class="st">&quot;logistic&quot;</span>, <span class="at">yreg =</span> <span class="st">&quot;logistic&quot;</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>                <span class="at">astar =</span> <span class="dv">0</span>, <span class="at">a =</span> <span class="dv">1</span>, <span class="at">mval =</span> <span class="fu">list</span>(<span class="dv">0</span>, <span class="dv">2</span>), </span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>                <span class="at">estimation =</span> <span class="st">&quot;imputation&quot;</span>, <span class="at">inference =</span> <span class="st">&quot;bootstrap&quot;</span>, <span class="at">nboot =</span> <span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">summary</span>(res_wb)</span></code></pre></div>
+<pre><code>## Causal Mediation Analysis
+## 
+## # Outcome regression:
+## 
+## Call:
+## glm(formula = Y ~ A + M1 + M2 + A * M1 + A * M2 + C1 + C2, family = binomial(), 
+##     data = getCall(x$reg.output$yreg)$data, weights = getCall(x$reg.output$yreg)$weights)
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  1.125104   0.478893   2.349 0.018804 *  
+## A            0.460265   0.400463   1.149 0.250419    
+## M1          -1.809307   0.180027 -10.050  &lt; 2e-16 ***
+## M21         -0.007101   0.364067  -0.020 0.984438    
+## M22          0.841167   0.405154   2.076 0.037879 *  
+## C1           0.504243   0.284671   1.771 0.076508 .  
+## C2          -0.643001   0.062025 -10.367  &lt; 2e-16 ***
+## A:M1         0.535812   0.183808   2.915 0.003556 ** 
+## A:M21        0.129896   0.370967   0.350 0.726222    
+## A:M22       -1.447096   0.412172  -3.511 0.000447 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 13336.6  on 9999  degrees of freedom
+## Residual deviance:  7347.9  on 9990  degrees of freedom
+## AIC: 7367.9
+## 
+## Number of Fisher Scoring iterations: 10
+## 
+## 
+## # Exposure regression for weighting: 
+## 
+## Call:
+## glm(formula = A ~ C1 + C2, family = binomial(), data = getCall(x$reg.output$ereg)$data, 
+##     weights = getCall(x$reg.output$ereg)$weights)
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)   
+## (Intercept)  0.08342    0.21440   0.389  0.69723   
+## C1           0.60899    0.21208   2.872  0.00409 **
+## C2           0.10532    0.04375   2.407  0.01606 * 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 12534  on 9999  degrees of freedom
+## Residual deviance: 12520  on 9997  degrees of freedom
+## AIC: 12526
+## 
+## Number of Fisher Scoring iterations: 4
+## 
+## 
+## # Effect decomposition on the odds ratio scale via the weighting-based approach
+##  
+## Direct counterfactual imputation estimation with 
+##  bootstrap standard errors, percentile confidence intervals and p-values 
+##  
+##                 Estimate Std.error   95% CIL 95% CIU  P.val    
+## Rcde            0.377584  0.083722  0.312595   0.425 &lt;2e-16 ***
+## Rpnde           2.246883  0.284810  2.048548   2.431 &lt;2e-16 ***
+## Rtnde           1.448124  0.144587  1.240936   1.435 &lt;2e-16 ***
+## Rpnie          37.227137  2.240781 35.432138  38.443 &lt;2e-16 ***
+## Rtnie          23.993018  0.915684 21.463508  22.694 &lt;2e-16 ***
+## Rte            53.909499  8.340267 43.969029  55.172 &lt;2e-16 ***
+## ERcde          -6.150317  0.155616 -5.893574  -5.685 &lt;2e-16 ***
+## ERintref        7.397200  0.129194  6.942982   7.117 &lt;2e-16 ***
+## ERintmed       15.435479  5.814677  7.517255  15.329 &lt;2e-16 ***
+## ERpnie         36.227137  2.240781 34.435408  37.446 &lt;2e-16 ***
+## ERcde(prop)    -0.116242  0.023993 -0.137280  -0.105 &lt;2e-16 ***
+## ERintref(prop)  0.139809  0.022491  0.131453   0.162 &lt;2e-16 ***
+## ERintmed(prop)  0.291734  0.080488  0.174050   0.282 &lt;2e-16 ***
+## ERpnie(prop)    0.684700  0.081990  0.691406   0.802 &lt;2e-16 ***
+## pm              0.976434  0.001502  0.973593   0.976 &lt;2e-16 ***
+## int             0.431542  0.057997  0.335720   0.414 &lt;2e-16 ***
+## pe              1.116242  0.023993  1.105046   1.137 &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Rcde: controlled direct effect odds ratio; Rpnde: pure natural direct effect odds ratio; Rtnde: total natural direct effect odds ratio; Rpnie: pure natural indirect effect odds ratio; Rtnie: total natural indirect effect odds ratio; Rte: total effect odds ratio; ERcde: excess relative risk due to controlled direct effect; ERintref: excess relative risk due to reference interaction; ERintmed: excess relative risk due to mediated interaction; ERpnie: excess relative risk due to pure natural indirect effect; ERcde(prop): proportion ERcde; ERintref(prop): proportion ERintref; ERintmed(prop): proportion ERintmed; ERpnie(prop): proportion ERpnie; pm: overall proportion mediated; int: overall proportion attributable to interaction; pe: overall proportion eliminated)
+## 
+## Relevant variable values: 
+## $a
+## [1] 1
+## 
+## $astar
+## [1] 0
+## 
+## $yval
+## [1] &quot;1&quot;
+## 
+## $mval
+## $mval[[1]]
+## [1] 0
+## 
+## $mval[[2]]
+## [1] 2</code></pre>
+</div>
+<div id="the-inverse-odds-ratio-weighting-approach" class="section level2">
+<h2>The Inverse Odds-ratio Weighting Approach</h2>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>res_iorw <span class="ot">&lt;-</span> <span class="fu">cmest</span>(<span class="at">data =</span> data, <span class="at">model =</span> <span class="st">&quot;iorw&quot;</span>, <span class="at">outcome =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure =</span> <span class="st">&quot;A&quot;</span>,</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>                  <span class="at">mediator =</span> <span class="fu">c</span>(<span class="st">&quot;M1&quot;</span>, <span class="st">&quot;M2&quot;</span>), <span class="at">basec =</span> <span class="fu">c</span>(<span class="st">&quot;C1&quot;</span>, <span class="st">&quot;C2&quot;</span>), <span class="at">EMint =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>                  <span class="at">ereg =</span> <span class="st">&quot;logistic&quot;</span>, <span class="at">yreg =</span> <span class="st">&quot;logistic&quot;</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>                  <span class="at">astar =</span> <span class="dv">0</span>, <span class="at">a =</span> <span class="dv">1</span>, <span class="at">mval =</span> <span class="fu">list</span>(<span class="dv">0</span>, <span class="dv">2</span>), </span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>                  <span class="at">estimation =</span> <span class="st">&quot;imputation&quot;</span>, <span class="at">inference =</span> <span class="st">&quot;bootstrap&quot;</span>, <span class="at">nboot =</span> <span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a><span class="fu">summary</span>(res_iorw)</span></code></pre></div>
+<pre><code>## Causal Mediation Analysis
+## 
+## # Outcome regression for the total effect: 
+## 
+## Call:
+## glm(formula = Y ~ A + C1 + C2, family = binomial(), data = getCall(x$reg.output$yregTot)$data, 
+##     weights = getCall(x$reg.output$yregTot)$weights)
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  -2.9946     0.2726 -10.987   &lt;2e-16 ***
+## A             4.1997     0.1205  34.855   &lt;2e-16 ***
+## C1           -0.1306     0.2473  -0.528    0.597    
+## C2           -1.3288     0.0534 -24.885   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 13336.6  on 9999  degrees of freedom
+## Residual deviance:  9397.2  on 9996  degrees of freedom
+## AIC: 9405.2
+## 
+## Number of Fisher Scoring iterations: 6
+## 
+## 
+## # Outcome regression for the direct effect: 
+## 
+## Call:
+## glm(formula = Y ~ A + C1 + C2, family = binomial(), data = getCall(x$reg.output$yregDir)$data, 
+##     weights = getCall(x$reg.output$yregDir)$weights)
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  -1.5600     0.7405  -2.107   0.0351 *  
+## A             1.7294     0.1460  11.848   &lt;2e-16 ***
+## C1           -1.2645     0.7413  -1.706   0.0880 .  
+## C2           -3.7661     0.4333  -8.691   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 1926.6  on 9999  degrees of freedom
+## Residual deviance: 1423.0  on 9996  degrees of freedom
+## AIC: 1214.1
+## 
+## Number of Fisher Scoring iterations: 8
+## 
+## 
+## # Exposure regression for weighting: 
+## 
+## Call:
+## glm(formula = A ~ M1 + M2 + C1 + C2, family = binomial(), data = getCall(x$reg.output$ereg)$data, 
+##     weights = getCall(x$reg.output$ereg)$weights)
+## 
+## Coefficients:
+##             Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  1.14163    0.58304   1.958   0.0502 .  
+## M1          -2.00321    0.05823 -34.402  &lt; 2e-16 ***
+## M21          0.08020    0.13700   0.585   0.5583    
+## M22         -0.01835    0.17781  -0.103   0.9178    
+## C1           3.43446    0.58316   5.889 3.88e-09 ***
+## C2           4.84059    0.18684  25.907  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 12534.4  on 9999  degrees of freedom
+## Residual deviance:  2139.2  on 9994  degrees of freedom
+## AIC: 2151.2
+## 
+## Number of Fisher Scoring iterations: 8
+## 
+## 
+## # Effect decomposition on the odds ratio scale via the inverse odds ratio weighting approach
+##  
+## Direct counterfactual imputation estimation with 
+##  bootstrap standard errors, percentile confidence intervals and p-values 
+##  
+##       Estimate Std.error  95% CIL 95% CIU  P.val    
+## Rte   52.43407   7.51684 50.03706  60.134 &lt;2e-16 ***
+## Rpnde  4.97492   1.02826  4.47778   5.859 &lt;2e-16 ***
+## Rtnie 10.53969   0.67778 10.26394  11.175 &lt;2e-16 ***
+## pm     0.92272   0.00837  0.91783   0.929 &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Rte: total effect odds ratio; Rpnde: pure natural direct effect odds ratio; Rtnie: total natural indirect effect odds ratio; pm: proportion mediated)
+## 
+## Relevant variable values: 
+## $a
+## [1] 1
+## 
+## $astar
+## [1] 0
+## 
+## $yval
+## [1] &quot;1&quot;</code></pre>
+</div>
+<div id="the-natural-effect-model" class="section level2">
+<h2>The Natural Effect Model</h2>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a> res_ne <span class="ot">&lt;-</span> <span class="fu">cmest</span>(<span class="at">data =</span> data, <span class="at">model =</span> <span class="st">&quot;ne&quot;</span>, <span class="at">outcome =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure =</span> <span class="st">&quot;A&quot;</span>,</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>                 <span class="at">mediator =</span> <span class="fu">c</span>(<span class="st">&quot;M1&quot;</span>, <span class="st">&quot;M2&quot;</span>), <span class="at">basec =</span> <span class="fu">c</span>(<span class="st">&quot;C1&quot;</span>, <span class="st">&quot;C2&quot;</span>), <span class="at">EMint =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>                 <span class="at">yreg =</span> <span class="st">&quot;logistic&quot;</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>                 <span class="at">astar =</span> <span class="dv">0</span>, <span class="at">a =</span> <span class="dv">1</span>, <span class="at">mval =</span> <span class="fu">list</span>(<span class="dv">0</span>, <span class="dv">2</span>), </span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>                 <span class="at">estimation =</span> <span class="st">&quot;imputation&quot;</span>, <span class="at">inference =</span> <span class="st">&quot;bootstrap&quot;</span>, <span class="at">nboot =</span> <span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># summary(res_ne)</span></span></code></pre></div>
+</div>
+<div id="the-g-formula-approach" class="section level2">
+<h2>The g-formula Approach</h2>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>res_gformula <span class="ot">&lt;-</span> <span class="fu">cmest</span>(<span class="at">data =</span> data, <span class="at">model =</span> <span class="st">&quot;gformula&quot;</span>, <span class="at">outcome =</span> <span class="st">&quot;Y&quot;</span>, <span class="at">exposure =</span> <span class="st">&quot;A&quot;</span>,</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>                      <span class="at">mediator =</span> <span class="fu">c</span>(<span class="st">&quot;M1&quot;</span>, <span class="st">&quot;M2&quot;</span>), <span class="at">basec =</span> <span class="fu">c</span>(<span class="st">&quot;C1&quot;</span>, <span class="st">&quot;C2&quot;</span>), <span class="at">EMint =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>                      <span class="at">mreg =</span> <span class="fu">list</span>(<span class="st">&quot;poisson&quot;</span>, <span class="st">&quot;multinomial&quot;</span>), <span class="at">yreg =</span> <span class="st">&quot;logistic&quot;</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>                      <span class="at">astar =</span> <span class="dv">0</span>, <span class="at">a =</span> <span class="dv">1</span>, <span class="at">mval =</span> <span class="fu">list</span>(<span class="dv">0</span>, <span class="dv">2</span>), </span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>                      <span class="at">estimation =</span> <span class="st">&quot;imputation&quot;</span>, <span class="at">inference =</span> <span class="st">&quot;bootstrap&quot;</span>, <span class="at">nboot =</span> <span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">summary</span>(res_gformula)</span></code></pre></div>
+<pre><code>## Causal Mediation Analysis
+## 
+## # Outcome regression:
+## 
+## Call:
+## glm(formula = Y ~ A + M1 + M2 + A * M1 + A * M2 + C1 + C2, family = binomial(), 
+##     data = getCall(x$reg.output$yreg)$data, weights = getCall(x$reg.output$yreg)$weights)
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  1.125104   0.478893   2.349 0.018804 *  
+## A            0.460265   0.400463   1.149 0.250419    
+## M1          -1.809307   0.180027 -10.050  &lt; 2e-16 ***
+## M21         -0.007101   0.364067  -0.020 0.984438    
+## M22          0.841167   0.405154   2.076 0.037879 *  
+## C1           0.504243   0.284671   1.771 0.076508 .  
+## C2          -0.643001   0.062025 -10.367  &lt; 2e-16 ***
+## A:M1         0.535812   0.183808   2.915 0.003556 ** 
+## A:M21        0.129896   0.370967   0.350 0.726222    
+## A:M22       -1.447096   0.412172  -3.511 0.000447 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 13336.6  on 9999  degrees of freedom
+## Residual deviance:  7347.9  on 9990  degrees of freedom
+## AIC: 7367.9
+## 
+## Number of Fisher Scoring iterations: 10
+## 
+## 
+## # Mediator regressions: 
+## 
+## Call:
+## glm(formula = M1 ~ A + C1 + C2, family = poisson(), data = getCall(x$reg.output$mreg[[1L]])$data, 
+##     weights = getCall(x$reg.output$mreg[[1L]])$weights)
+## 
+## Coefficients:
+##             Estimate Std. Error  z value Pr(&gt;|z|)    
+## (Intercept)  1.06240    0.05631   18.868  &lt; 2e-16 ***
+## A           -2.00634    0.01331 -150.709  &lt; 2e-16 ***
+## C1           0.45102    0.05496    8.206 2.29e-16 ***
+## C2           0.80084    0.01314   60.961  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 43205  on 9999  degrees of freedom
+## Residual deviance: 10846  on 9996  degrees of freedom
+## AIC: 33081
+## 
+## Number of Fisher Scoring iterations: 5
+## 
+## 
+## Call:
+## nnet::multinom(formula = M2 ~ A + C1 + C2, data = getCall(x$reg.output$mreg[[2]])$data, 
+##     trace = FALSE, weights = getCall(x$reg.output$mreg[[2]])$weights)
+## 
+## Coefficients:
+##   (Intercept)         A         C1        C2
+## 1    1.946698 -1.785773 -0.3220412 0.7256062
+## 2    0.654218  0.688984 -1.7259629 0.4295399
+## 
+## Std. Errors:
+##   (Intercept)          A        C1         C2
+## 1   0.2620667 0.06393051 0.2550181 0.05235024
+## 2   0.3129261 0.10149606 0.2996053 0.06106820
+## 
+## Residual Deviance: 17966.15 
+## AIC: 17982.15 
+## 
+## # Effect decomposition on the odds ratio scale via the g-formula approach
+##  
+## Direct counterfactual imputation estimation with 
+##  bootstrap standard errors, percentile confidence intervals and p-values 
+##  
+##                 Estimate Std.error   95% CIL 95% CIU  P.val    
+## Rcde            0.377584  0.249638  0.164858   0.498 &lt;2e-16 ***
+## Rpnde           2.632996  0.240285  2.199465   2.522 &lt;2e-16 ***
+## Rtnde           1.480370  0.334429  1.079951   1.529 &lt;2e-16 ***
+## Rpnie          41.357960  2.435336 40.544935  43.817 &lt;2e-16 ***
+## Rtnie          23.253011  2.281049 21.514289  24.579 &lt;2e-16 ***
+## Rte            61.225077 10.925643 47.319927  61.994 &lt;2e-16 ***
+## ERcde          -6.830006  1.929617 -8.232152  -5.640 &lt;2e-16 ***
+## ERintref        8.463002  1.689333  7.162577   9.432 &lt;2e-16 ***
+## ERintmed       18.234121 13.120695  2.350803  19.978 &lt;2e-16 ***
+## ERpnie         40.357960  2.435336 39.548319  42.820 &lt;2e-16 ***
+## ERcde(prop)    -0.113408  0.063509 -0.178257  -0.093 &lt;2e-16 ***
+## ERintref(prop)  0.140523  0.064206  0.117884   0.204 &lt;2e-16 ***
+## ERintmed(prop)  0.302766  0.206270  0.048326   0.325 &lt;2e-16 ***
+## ERpnie(prop)    0.670119  0.205573  0.649599   0.926 &lt;2e-16 ***
+## pm              0.972885  0.000697  0.974113   0.975 &lt;2e-16 ***
+## int             0.443289  0.142064  0.252471   0.443 &lt;2e-16 ***
+## pe              1.113408  0.063509  1.092933   1.178 &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Rcde: controlled direct effect odds ratio; Rpnde: pure natural direct effect odds ratio; Rtnde: total natural direct effect odds ratio; Rpnie: pure natural indirect effect odds ratio; Rtnie: total natural indirect effect odds ratio; Rte: total effect odds ratio; ERcde: excess relative risk due to controlled direct effect; ERintref: excess relative risk due to reference interaction; ERintmed: excess relative risk due to mediated interaction; ERpnie: excess relative risk due to pure natural indirect effect; ERcde(prop): proportion ERcde; ERintref(prop): proportion ERintref; ERintmed(prop): proportion ERintmed; ERpnie(prop): proportion ERpnie; pm: overall proportion mediated; int: overall proportion attributable to interaction; pe: overall proportion eliminated)
+## 
+## Relevant variable values: 
+## $a
+## [1] 1
+## 
+## $astar
+## [1] 0
+## 
+## $yval
+## [1] &quot;1&quot;
+## 
+## $mval
+## $mval[[1]]
+## [1] 0
+## 
+## $mval[[2]]
+## [1] 2</code></pre>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
