@@ -6,11 +6,11 @@ authors:
     
 title: CMAverse Replicate
 url: https://ranan2965.github.io/CMAverse_replicate/
-toc:
-  depth: 3
 template:
   params:
     bootswatch: sandstone
+toc:
+  depth: 3
 navbar:
   type: default
   left:

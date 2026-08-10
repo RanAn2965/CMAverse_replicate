@@ -1,6 +1,9 @@
 ---
 title: "Multistate approach for stochastic interventions on a time-to event mediator in the presence of competing risks"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
 date: "`r Sys.Date()`"
 vignette: >
   %\VignetteIndexEntry{Multistate approach for stochastic interventions on a time-to event mediator in the presence of competing risks}

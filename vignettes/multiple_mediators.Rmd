@@ -1,6 +1,9 @@
 ---
 title: "Statistical Modeling with Multiple Mediators"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
 date: "`r Sys.Date()`"
 vignette: >
   %\VignetteIndexEntry{Statistical Modeling with Multiple Mediators}

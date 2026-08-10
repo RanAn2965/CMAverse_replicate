@@ -1,7 +1,10 @@
 ---
 title: "Overview of Modeling Approaches for Causal Mediation Analysis"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
 vignette: >
   %\VignetteIndexEntry{Overview of Modeling Approaches for Causal Mediation Analysis}
   %\VignetteEncoding{UTF-8}

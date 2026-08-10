@@ -1,6 +1,9 @@
 ---
 title: "Statistical Modeling with Mediator-outcome Confounders Affected by the Exposure"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
 date: "`r Sys.Date()`"
 vignette: >
   %\VignetteIndexEntry{Statistical Modeling with Mediator-outcome Confounders Affected by the Exposure}
