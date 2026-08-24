@@ -1,4 +1,4 @@
-# Technical Guide and Code Review: `cmsens.R` in `CMAverse`
+# Code Review: `cmsens.R`
 
 This guide provides an in-depth code review, architectural blueprint, and mathematical breakdown of the **`cmsens`** function in the `CMAverse` package. `cmsens` serves as the primary gateway for assessing the robustness of causal mediation analyses against two major threats to validity: **unmeasured confounding** and **measurement error (misclassification)**.
 

@@ -1,4 +1,4 @@
-# Deep-Dive Code Review & Technical Notes: `cmest.R` in `CMAverse`
+# Code Review: `cmest.R`
 
 This document provides a comprehensive breakdown of the internal logic, architectural patterns, helper dependencies, and bootstrap loops of the master function `cmest()` in the `CMAverse` package.
 
